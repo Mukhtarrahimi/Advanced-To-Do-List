@@ -6,17 +6,20 @@ const morgan = require("morgan");
 const app = express();
 
 // Import Routes
-import authRoutes from "./routes/authRoute.js";
+const authRoutes = require("./routes/authRoute");
+// Import Middleware
+const { notFound, errorHandler } = require("./middleware/errorHandler");
+
 
 // Security
 app.use(helmet());
 
 // CORS
 app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
+    cors({
+        origin: true,
+        credentials: true,
+    })
 );
 
 // Body Parsers
@@ -25,7 +28,7 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 // Logger
 if (process.env.NODE_ENV !== "production") {
-  app.use(morgan("dev"));
+    app.use(morgan("dev"));
 }
 
 // Routes
@@ -33,31 +36,15 @@ app.use("/api/auth", authRoutes);
 
 // Health Check
 app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    env: process.env.NODE_ENV || "development",
-    timestamp: new Date().toISOString(),
-  });
+    res.status(200).json({
+        status: "ok",
+        env: process.env.NODE_ENV || "development",
+        timestamp: new Date().toISOString(),
+    });
 });
+// Error Handling Middleware
 
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({
-    message: "Route not found",
-    path: req.originalUrl,
-  });
-});
-
-// Global Error Handler
-app.use((err, req, res, next) => {
-  console.error(err);
-
-  const statusCode = err.statusCode || 500;
-
-  res.status(statusCode).json({
-    message: err.message || "Internal Server Error!",
-    stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
-  });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;

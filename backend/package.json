@@ -1,16 +1,14 @@
 {
     "name": "backend",
     "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "main": "src/server.js",
     "scripts": {
-        "dev": "nodemon src/server.js",
-        "start": "nodemon src/server.js"
+        "dev": "nodemon src/server.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "type": "module",
+    "type": "commonjs",
     "dependencies": {
         "bcryptjs": "^3.0.3",
         "cors": "^2.8.5",

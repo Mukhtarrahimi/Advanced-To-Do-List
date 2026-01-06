@@ -1,10 +1,9 @@
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
 
 const app = express();
-
 
 // Import Routes
 import authRoutes from "./routes/authRoute.js";
@@ -14,10 +13,10 @@ app.use(helmet());
 
 // CORS
 app.use(
-    cors({
-        origin: true,
-        credentials: true,
-    })
+  cors({
+    origin: true,
+    credentials: true,
+  })
 );
 
 // Body Parsers
@@ -26,7 +25,7 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 // Logger
 if (process.env.NODE_ENV !== "production") {
-    app.use(morgan("dev"));
+  app.use(morgan("dev"));
 }
 
 // Routes
@@ -34,31 +33,31 @@ app.use("/api/auth", authRoutes);
 
 // Health Check
 app.get("/api/health", (req, res) => {
-    res.status(200).json({
-        status: "ok",
-        env: process.env.NODE_ENV || "development",
-        timestamp: new Date().toISOString(),
-    });
+  res.status(200).json({
+    status: "ok",
+    env: process.env.NODE_ENV || "development",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // 404 Handler
 app.use((req, res) => {
-    res.status(404).json({
-        message: "Route not found",
-        path: req.originalUrl,
-    });
+  res.status(404).json({
+    message: "Route not found",
+    path: req.originalUrl,
+  });
 });
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-    console.error(err);
+  console.error(err);
 
-    const statusCode = err.statusCode || 500;
+  const statusCode = err.statusCode || 500;
 
-    res.status(statusCode).json({
-        message: err.message || "Internal Server Error!",
-        stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
-    });
+  res.status(statusCode).json({
+    message: err.message || "Internal Server Error!",
+    stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
+  });
 });
 
-export default app;
+module.exports = app;

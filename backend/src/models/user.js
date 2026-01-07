@@ -68,12 +68,12 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true, strict: true });
 
 // hash password
-userSchema.pre("save", async function(next) {
-    if (!this.isModified("hashPassword")) return next();
-
-    this.hashPassword = await bcrypt.hash(this.hashPassword, 12);
-    next();
+userSchema.pre("save", async function() {
+    if (this.isModified("hashPassword")) {
+        this.hashPassword = await bcrypt.hash(this.hashPassword, 12);
+    }
 });
+
 
 // compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {

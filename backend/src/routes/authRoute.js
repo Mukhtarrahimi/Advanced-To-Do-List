@@ -1,7 +1,7 @@
 const express = require("express");
-const { register } = require("../controllers/authController"); // تابع register
+const { register } = require("../controllers/authController");
 const router = express.Router();
 
-router.post("/register", register); // ✔ استفاده از همان نام
+router.post("/register", register);
 
 module.exports = router;

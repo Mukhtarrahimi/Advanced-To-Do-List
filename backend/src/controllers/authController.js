@@ -39,6 +39,7 @@ exports.register = async (req, res) => {
       refreshToken,
     });
   } catch (err) {
+    console.log(err, "here is the error");
     res.status(500).json({
       success: false,
       message: "Server error",

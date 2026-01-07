@@ -8,7 +8,7 @@ const app = express();
 // Import Routes
 const authRoutes = require("./routes/authRoute");
 // Import Middleware
-const { notFound, errorHandler } = require("./middleware/errorHandler");
+const { notFound, errorHandler } = require("./middlewares/errorHandler");
 
 
 // Security

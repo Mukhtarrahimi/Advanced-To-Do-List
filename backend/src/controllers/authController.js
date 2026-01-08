@@ -2,7 +2,10 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { generateAccessToken, generateRefreshToken } = require("../utils/token");
-const { registerValidation } = require("../validations/authValidation");
+const {
+  registerValidation,
+  loginValidation,
+} = require("../validations/authValidation");
 
 exports.register = async (req, res) => {
   try {
@@ -43,6 +46,58 @@ exports.register = async (req, res) => {
     await user.save();
 
     res.status(201).json({
+      success: true,
+      user: user.toJSON(),
+      accessToken,
+      refreshToken,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
+  }
+};
+
+// Login controller
+exports.login = async (req, res) => {
+  try {
+    const { error, value } = loginValidation(req.body);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: "validation failed",
+        details: error.details.map((detail) => detail.message),
+      });
+    }
+    const { email, password } = value;
+    const user = await User.findOne({ email }).select(
+      "+hashPassword +refreshToken"
+    );
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.hashPassword);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // generate tokens
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.status(200).json({
       success: true,
       user: user.toJSON(),
       accessToken,

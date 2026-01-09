@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 // imorted
-const { protect } = require("../middlewares/authMiddleware");
+const
+    protect = require("../middlewares/authMiddleware");
 const { register, login, logout } = require("../controllers/authController");
 
 router.post("/register", register);

@@ -183,3 +183,30 @@ exports.refreshToken = async (req, res) => {
     });
   }
 };
+
+//update profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = req.user;
+    const { name, username, phone, profile } = req.body;
+
+    if (name) user.name = name;
+    if (username) user.username = username;
+    if (phone) user.phone = phone;
+    if (profile) user.profile = profile;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      user: user.toJSON(),
+      message: "Profile updated successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
+  }
+};

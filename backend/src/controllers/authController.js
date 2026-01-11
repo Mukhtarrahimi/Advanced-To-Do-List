@@ -5,6 +5,7 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/token");
 const {
   registerValidation,
   loginValidation,
+  updateProfileValidation,
 } = require("../validations/authValidation");
 
 exports.register = async (req, res) => {
@@ -187,26 +188,51 @@ exports.refreshToken = async (req, res) => {
 //update profile
 exports.updateProfile = async (req, res) => {
   try {
-    const user = req.user;
+    const { error } = updateProfileValidation(req.body);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        details: error.details.map((d) => d.message),
+      });
+    }
+
     const { name, username, phone, profile } = req.body;
+    const updates = { name, username, phone, profile };
 
-    if (name) user.name = name;
-    if (username) user.username = username;
-    if (phone) user.phone = phone;
-    if (profile) user.profile = profile;
-
-    await user.save();
+    if (username) {
+      const exist = await User.findOne({
+        username,
+        _id: { $ne: req.user._id },
+      });
+      if (exist) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Username already taken" });
+      }
+    }
+    if (phone) {
+      const exist = await User.findOne({ phone, _id: { $ne: req.user._id } });
+      if (exist) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Phone number already in use" });
+      }
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
 
     res.status(200).json({
       success: true,
-      user: user.toJSON(),
+      user: updatedUser.toJSON(),
       message: "Profile updated successfully",
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: err.message,
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
   }
 };

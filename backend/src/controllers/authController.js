@@ -156,9 +156,9 @@ exports.refreshToken = async (req, res) => {
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      return res.status(401).json({
+      return res.status(400).json({
         success: false,
-        message: "No refresh token provided",
+        message: "Refresh token is required",
       });
     }
 
@@ -174,12 +174,13 @@ exports.refreshToken = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      message: "Access token refreshed successfully",
       accessToken: newAccessToken,
     });
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Server error while refreshing token",
       error: err.message,
     });
   }

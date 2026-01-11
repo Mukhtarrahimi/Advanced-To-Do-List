@@ -46,7 +46,36 @@ const loginValidation = (data) => {
   return schema.validate(data, { abortEarly: false });
 };
 
+const updateProfileValidation = (data) => {
+  const schema = Joi.object({
+    name: Joi.string().min(2).max(50).optional().messages({
+      "string.min": "Name must be at least 2 characters",
+      "string.max": "Name cannot exceed 50 characters",
+    }),
+
+    username: Joi.string().alphanum().min(3).max(30).optional().messages({
+      "string.alphanum": "Username must contain only letters and numbers",
+      "string.min": "Username must be at least 3 characters",
+      "string.max": "Username cannot exceed 30 characters",
+    }),
+
+    phone: Joi.string()
+      .pattern(/^[0-9]{10,15}$/)
+      .optional()
+      .messages({
+        "string.pattern.base": "Phone must contain 10–15 digits",
+      }),
+
+    profile: Joi.string().uri().optional().messages({
+      "string.uri": "Profile must be a valid URL",
+    }),
+  });
+
+  return schema.validate(data, { abortEarly: false });
+};
+
 module.exports = {
   registerValidation,
   loginValidation,
+  updateProfileValidation,
 };

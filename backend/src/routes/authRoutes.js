@@ -1,17 +1,24 @@
 const express = require("express");
 const router = express.Router();
-// imorted
-const { protect } = require("../middlewares/authMiddleware");
+
+// Controllers
 const {
-  register,
-  login,
-  logout,
-  getMe,
+    register,
+    login,
+    logout,
+    getMe,
+    updateProfile,
+    refreshToken,
 } = require("../controllers/authController");
+
+// Middlewares
+const { protect } = require("../middlewares/authMiddleware");
 
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", protect, logout);
+router.put("/update-profile", protect, updateProfile);
 router.get("/me", protect, getMe);
+router.post("/refresh-token", refreshToken);
 
 module.exports = router;

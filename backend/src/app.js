@@ -6,7 +6,7 @@ const morgan = require("morgan");
 const app = express();
 
 // Import Routes
-const authRoutes = require("./routes/authRoute");
+const authRoutes = require("./routes/authRoutes");
 // Import Middleware
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 

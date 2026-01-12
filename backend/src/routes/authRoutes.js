@@ -9,6 +9,7 @@ const {
     getMe,
     updateProfile,
     refreshToken,
+    changePassword,
 } = require("../controllers/authController");
 
 // Middlewares
@@ -20,5 +21,6 @@ router.post("/logout", protect, logout);
 router.put("/update-profile", protect, updateProfile);
 router.get("/me", protect, getMe);
 router.post("/refresh-token", refreshToken);
+router.put("/change-password", protect, changePassword);
 
 module.exports = router;

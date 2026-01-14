@@ -7,6 +7,8 @@ const app = express();
 
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
+const taskRoutes = require("./routes/taskRoute");
+
 // Import Middleware
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 
@@ -33,6 +35,8 @@ if (process.env.NODE_ENV !== "production") {
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
+
 
 // Health Check
 app.get("/api/health", (req, res) => {
